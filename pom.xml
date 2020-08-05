@@ -18,7 +18,6 @@
         <module>control</module>
         <module>ueransim</module>
         <module>crypto</module>
-        <module>backend</module>
     </modules>
 
     <build>

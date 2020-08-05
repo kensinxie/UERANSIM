@@ -36,7 +36,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 public class SctpClient implements ISctpClient {
-    private static final int RECEIVER_BUFFER_SIZE = 1073741824;
+    private static final int RECEIVER_BUFFER_SIZE = 64000;
 
     private final String host;
     private final int port;
@@ -112,6 +112,6 @@ public class SctpClient implements ISctpClient {
 
     @Override
     public boolean isOpen() {
-        return channel.isOpen();
+        return channel != null && channel.isOpen();
     }
 }

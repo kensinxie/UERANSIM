@@ -28,22 +28,22 @@ package tr.havelsan.ueransim.api.gnb;
 
 import tr.havelsan.ueransim.api.sys.MockedRadio;
 import tr.havelsan.ueransim.core.GnbSimContext;
-import tr.havelsan.ueransim.core.exceptions.NotImplementedException;
 import tr.havelsan.ueransim.events.gnb.GnbCommandEvent;
 import tr.havelsan.ueransim.events.gnb.GnbUplinkNasEvent;
 import tr.havelsan.ueransim.events.gnb.SctpAssociationSetupEvent;
 import tr.havelsan.ueransim.events.gnb.SctpReceiveEvent;
+import tr.havelsan.ueransim.exceptions.NgapErrorException;
 import tr.havelsan.ueransim.nas.NasDecoder;
 import tr.havelsan.ueransim.ngap0.Ngap;
-import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.ngap0.NgapEncoding;
+import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
 import tr.havelsan.ueransim.ngap0.core.NGAP_BaseMessage;
 import tr.havelsan.ueransim.ngap0.ies.choices.NGAP_UserLocationInformation;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_AMF_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.ies.integers.NGAP_RAN_UE_NGAP_ID;
 import tr.havelsan.ueransim.ngap0.msg.*;
 import tr.havelsan.ueransim.ngap0.pdu.NGAP_PDU;
-import tr.havelsan.ueransim.ngap0.NgapXerEncoder;
+import tr.havelsan.ueransim.ngap1.NgapUtils;
 import tr.havelsan.ueransim.structs.Guami;
 import tr.havelsan.ueransim.utils.Debugging;
 import tr.havelsan.ueransim.utils.Logging;
@@ -63,7 +63,12 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+
+        if (amfCtx.sctpClient.isOpen()) {
+            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+        } else {
+            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
+        }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
@@ -106,85 +111,52 @@ public class GNodeB {
         Logging.debug(Tag.MESSAGING, Utils.xmlToJson(NgapXerEncoder.encode(ngapPdu)));
 
         var amfCtx = ctx.amfContexts.get(ueCtx.associatedAmf);
-        amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+
+        if (amfCtx.sctpClient.isOpen()) {
+            amfCtx.sctpClient.send(amfCtx.streamNumber, NgapEncoding.encodeAper(ngapPdu));
+        } else {
+            Logging.error(Tag.CONNECTION, "SCTP Connection could not established yet, message could not send.");
+        }
 
         Logging.debug(Tag.MESSAGING, "Sent.");
     }
 
     public static void receiveFromNetwork(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
+        Debugging.assertThread(ctx);
+
         var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
         if (ngapMessage == null) {
             return;
         }
 
-        if (ngapMessage.isUeAssociated()) {
-            receiveFromNetworkUeAssociated(ctx, associatedAmf, ngapPdu);
-        } else {
-            receiveFromNetworkNonUe(ctx, associatedAmf, ngapPdu);
-        }
-    }
-
-    private static void receiveFromNetworkNonUe(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
-        Debugging.assertThread(ctx);
-
-        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
-
-        if (ngapMessage instanceof NGAP_NGSetupResponse) {
-            GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
-            GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
-        } else {
-            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
-        }
-    }
-
-    private static void receiveFromNetworkUeAssociated(GnbSimContext ctx, Guami associatedAmf, NGAP_PDU ngapPdu) {
-        Debugging.assertThread(ctx);
-
-        var ngapMessage = Ngap.getMessageFromPdu(ngapPdu);
-        UUID associatedUe;
-
-        // Find associated UE
-        {
-            var ieAmfUeNgapId = ngapMessage.getProtocolIe(NGAP_AMF_UE_NGAP_ID.class);
-            long amfUeNgapId;
-            if (ieAmfUeNgapId != null) {
-                amfUeNgapId = ieAmfUeNgapId.value;
+        try {
+            if (ngapMessage instanceof NGAP_NGSetupResponse) {
+                GnbInterfaceManagement.receiveNgSetupResponse(ctx, (NGAP_NGSetupResponse) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_NGSetupFailure) {
+                GnbInterfaceManagement.receiveNgSetupFailure(ctx, (NGAP_NGSetupFailure) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
+                GnbNasTransport.receiveDownlinkNasTransport(ctx, (NGAP_DownlinkNASTransport) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
+                GnbUeContextManagement.receiveInitialContextSetup(ctx, (NGAP_InitialContextSetupRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
+                GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, (NGAP_RerouteNASRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_UEContextReleaseCommand) {
+                GnbUeContextManagement.receiveContextReleaseCommand(ctx, (NGAP_UEContextReleaseCommand) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_UEContextModificationRequest) {
+                GnbUeContextManagement.receiveContextModificationRequest(ctx, (NGAP_UEContextModificationRequest) ngapMessage);
+            } else if (ngapMessage instanceof NGAP_PDUSessionResourceSetupRequest) {
+                GnbPduSessionManagement.receiveResourceSetupRequest(ctx, (NGAP_PDUSessionResourceSetupRequest) ngapMessage);
             } else {
-                // todo: send error indication
-                throw new NotImplementedException("send error indication");
+                Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
             }
-
-            var ieRanUeNgapId = ngapMessage.getProtocolIe(NGAP_RAN_UE_NGAP_ID.class);
-            if (ieRanUeNgapId != null) {
-                long ranUeNgapId = ieRanUeNgapId.value;
-                associatedUe = GnbUeManagement.findUe(ctx, ranUeNgapId);
-                if (associatedUe == null) {
-                    // todo: send error indication
-                    throw new NotImplementedException("send error indication");
-                }
+        } catch (NgapErrorException e) {
+            var errorIndication = new NGAP_ErrorIndication();
+            errorIndication.addProtocolIe(e.cause);
+            if (e.associatedUe != null) {
+                GNodeB.sendToNetworkUeAssociated(ctx, e.associatedUe, errorIndication);
             } else {
-                // todo: send error indication
-                throw new NotImplementedException("send error indication");
+                GNodeB.sendToNetworkNonUe(ctx, associatedAmf, errorIndication);
             }
-
-            var gnbUeContext = ctx.ueContexts.get(associatedUe);
-            if (gnbUeContext.amfUeNgapId == null) {
-                gnbUeContext.amfUeNgapId = amfUeNgapId;
-            } else if (amfUeNgapId != gnbUeContext.amfUeNgapId) {
-                // todo: either send error indication or update amf-ui-ngap-id
-                throw new NotImplementedException("");
-            }
-        }
-
-        if (ngapMessage instanceof NGAP_DownlinkNASTransport) {
-            GnbNasTransport.receiveDownlinkNasTransport(ctx, associatedUe, (NGAP_DownlinkNASTransport) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_InitialContextSetupRequest) {
-            GnbUeContextManagement.handleInitialContextSetup(ctx, associatedUe, (NGAP_InitialContextSetupRequest) ngapMessage);
-        } else if (ngapMessage instanceof NGAP_RerouteNASRequest) {
-            GnbNasTransport.receiveRerouteNasRequest(ctx, associatedAmf, associatedUe, (NGAP_RerouteNASRequest) ngapMessage);
-        } else {
-            Logging.error(Tag.MESSAGING, "Unhandled message received: %s", ngapMessage.getClass().getSimpleName());
         }
     }
 

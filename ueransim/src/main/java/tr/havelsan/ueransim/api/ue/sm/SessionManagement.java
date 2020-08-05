@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.sm;
 
+import tr.havelsan.ueransim.api.nas.NasTimer;
 import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainSmMessage;
@@ -53,6 +54,25 @@ public class SessionManagement {
             SmPduSessionEstablishment.receiveEstablishmentReject(ctx, (PduSessionEstablishmentReject) message);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
+        }
+    }
+
+    public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
+        Debugging.assertThread(ctx);
+
+        // todo
+    }
+
+    public static void executeCommand(UeSimContext ctx, String cmd) {
+        Debugging.assertThread(ctx);
+
+        switch (cmd) {
+            case "pdu-session-establishment":
+                SmPduSessionEstablishment.sendEstablishmentRequest(ctx);
+                break;
+            default:
+                Logging.error(Tag.EVENT, "SessionManagement.executeCommand, command not recognized: %s", cmd);
+                break;
         }
     }
 }

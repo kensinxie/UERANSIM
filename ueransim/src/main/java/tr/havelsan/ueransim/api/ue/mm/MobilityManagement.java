@@ -26,6 +26,7 @@
 
 package tr.havelsan.ueransim.api.ue.mm;
 
+import tr.havelsan.ueransim.api.nas.NasTimer;
 import tr.havelsan.ueransim.api.ue.UserEquipment;
 import tr.havelsan.ueransim.core.UeSimContext;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
@@ -71,10 +72,23 @@ public class MobilityManagement {
         }
     }
 
+    public static void receiveTimerExpire(UeSimContext ctx, NasTimer timer) {
+        Debugging.assertThread(ctx);
+
+        if (timer.timerCode == 3512) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+        }
+    }
+
     public static void executeCommand(UeSimContext ctx, String cmd) {
+        Debugging.assertThread(ctx);
+
         switch (cmd) {
             case "initial-registration":
                 MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+                break;
+            case "periodic-registration":
+                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
                 break;
             default:
                 Logging.error(Tag.EVENT, "MobilityManagement.executeCommand, command not recognized: %s", cmd);

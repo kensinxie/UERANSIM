@@ -1,0 +1,5 @@
+# Possible profiles are
+#  - custom
+#  - free5gc
+#  - havelsan
+selected-profile: 'custom'

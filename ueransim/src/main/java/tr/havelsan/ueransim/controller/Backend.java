@@ -40,12 +40,16 @@ public class Backend {
 
         final List<LogEntry> logEntries = new ArrayList<>();
 
+        public synchronized void addLog(LogEntry logEntry){
+            this.logEntries.add(logEntry);
+        }
+
         public Handler() {
-            Logging.addLogHandler(logEntries::add);
+            Logging.addLogHandler(this::addLog);
         }
 
         @Override
-        public void handleMessage(@NotNull WsMessageContext ctx) {
+        public synchronized void handleMessage(@NotNull WsMessageContext ctx) {
 
             for (var s : logEntries) {
                 ctx.send(new Wrapper("log", s));
@@ -58,7 +62,7 @@ public class Backend {
         }
 
         @Override
-        public void handleConnect(@NotNull WsConnectContext ctx) {
+        public synchronized void handleConnect(@NotNull WsConnectContext ctx) {
             ctx.send(new Wrapper("possibleEvents", EventParser.possibleEvents()));
         }
     }

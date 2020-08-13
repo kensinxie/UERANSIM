@@ -26,7 +26,7 @@
 
 package tr.havelsan.ueransim;
 
-import tr.havelsan.ueransim.api.gnb.ngap.NgapSctpAssociationHandler;
+import tr.havelsan.ueransim.api.gnb.sctp.NgapSctpAssociationHandler;
 import tr.havelsan.ueransim.api.sys.SimulationContext;
 import tr.havelsan.ueransim.core.Constants;
 import tr.havelsan.ueransim.core.GnbSimContext;
@@ -66,8 +66,12 @@ public class AppConfig {
     }
 
     public static GnbSimContext createGnbSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        return createGnbSimContext(simCtx, MtsConstruct.construct(GnbConfig.class, config, true));
+    }
+
+    public static GnbSimContext createGnbSimContext(SimulationContext simCtx, GnbConfig config) {
         var ctx = new GnbSimContext(simCtx);
-        ctx.config = MtsConstruct.construct(GnbConfig.class, config, true);
+        ctx.config = config;
 
         // Create AMF gNB contexts and SCTP Clients
         {
@@ -89,7 +93,6 @@ public class AppConfig {
 
                 var amfGnbCtx = new GnbAmfContext(amfConfig.guami);
                 amfGnbCtx.sctpClient = sctpClient;
-                amfGnbCtx.streamNumber = Constants.DEFAULT_STREAM_NUMBER;
 
                 ctx.amfContexts.put(amfGnbCtx.guami, amfGnbCtx);
             }
@@ -99,11 +102,12 @@ public class AppConfig {
     }
 
     public static UeSimContext createUeSimContext(SimulationContext simCtx, ImplicitTypedObject config) {
+        return createUeSimContext(simCtx, config.asConstructed(UeConfig.class));
+    }
+
+    public static UeSimContext createUeSimContext(SimulationContext simCtx, UeConfig config) {
         var ctx = new UeSimContext(simCtx);
-
-        // Parse UE Config
-        ctx.ueConfig = config.asConstructed(UeConfig.class);
-
+        ctx.ueConfig = config;
         return ctx;
     }
 

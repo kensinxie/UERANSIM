@@ -1,20 +1,20 @@
 gnbId: 1
 
 gnbPlmn:
-  mcc: 286
-  mnc: 1
+  mcc: 901
+  mnc: 70
 
 amfConfigs:
   - guami:
-      mcc: 286
-      mnc: 1
+      mcc: 901
+      mnc: 70
       amfRegionId:
         hex: '2a'
       amfSetId:
         hex: '5580'
       amfPointer:
         hex: 'a8'
-    host: 127.0.0.1
+    host: 127.0.0.2
     port: 38412
     isMocked: false
     mockingFile: mockedAmf.yaml
@@ -24,8 +24,8 @@ supportedTAs:
       hex: '000001'
     broadcastPlmns:
       - plmn:
-          mcc: 286
-          mnc: 1
+          mcc: 901
+          mnc: 70
         taiSliceSupportNssais:
           - sst:
               value: 1

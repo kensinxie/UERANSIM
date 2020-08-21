@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.controller;
+package tr.havelsan.ueransim.app.controller;
 
 import tr.havelsan.ueransim.utils.Json;
 

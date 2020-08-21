@@ -1,4 +1,4 @@
-package tr.havelsan.ueransim.controller;
+package tr.havelsan.ueransim.app.controller;
 
 
 import io.javalin.Javalin;
@@ -7,7 +7,7 @@ import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.events.EventParser;
+import tr.havelsan.ueransim.app.events.EventParser;
 import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.LogEntry;
 import tr.havelsan.ueransim.utils.Logging;

@@ -24,18 +24,18 @@
  * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.controller;
+package tr.havelsan.ueransim.app.controller;
 
-import tr.havelsan.ueransim.AppConfig;
-import tr.havelsan.ueransim.api.sys.Simulation;
-import tr.havelsan.ueransim.core.nodes.GnbNode;
-import tr.havelsan.ueransim.core.nodes.UeNode;
-import tr.havelsan.ueransim.events.EventParser;
-import tr.havelsan.ueransim.events.gnb.GnbEvent;
-import tr.havelsan.ueransim.events.ue.UeEvent;
+import tr.havelsan.ueransim.app.AppConfig;
+import tr.havelsan.ueransim.app.api.sys.Simulation;
+import tr.havelsan.ueransim.app.core.nodes.GnbNode;
+import tr.havelsan.ueransim.app.core.nodes.UeNode;
+import tr.havelsan.ueransim.app.events.EventParser;
+import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
+import tr.havelsan.ueransim.app.events.ue.UeEvent;
+import tr.havelsan.ueransim.app.mts.MtsInitializer;
 import tr.havelsan.ueransim.mts.ImplicitTypedObject;
 import tr.havelsan.ueransim.mts.MtsDecoder;
-import tr.havelsan.ueransim.mts.MtsInitializer;
 import tr.havelsan.ueransim.utils.*;
 
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class ProgramPOC {
         AppConfig.initialize();
         initLogging();
 
-        var simContext = AppConfig.createSimContext();
+        var simContext = AppConfig.createSimContext(null);
 
         var gnbContext = AppConfig.createGnbSimContext(simContext, (ImplicitTypedObject) MtsDecoder.decode(AppConfig.PROFILE + "gnb.yaml"));
         Simulation.registerGnb(simContext, gnbContext);

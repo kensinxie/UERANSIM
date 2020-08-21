@@ -1,7 +1,7 @@
-package tr.havelsan.ueransim.controller;
+package tr.havelsan.ueransim.app.controller;
 
 import io.javalin.http.Handler;
-import tr.havelsan.ueransim.events.EventParser;
+import tr.havelsan.ueransim.app.events.EventParser;
 
 public class FeatureController {
 

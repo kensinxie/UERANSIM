@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue.mm;
@@ -144,6 +142,7 @@ public class MmAuthentication {
                 var eapResponse = new EapAkaPrime(Eap.ECode.RESPONSE, receivedEap.id, ESubType.AKA_AUTHENTICATION_REJECT);
                 var response = new AuthenticationReject(new IEEapMessage(eapResponse));
                 MobilityManagement.sendMm(ctx, response);
+                return;
             }
         }
 

@@ -12,10 +12,8 @@ import tr.havelsan.ueransim.utils.Json;
 import tr.havelsan.ueransim.utils.console.LogEntry;
 import tr.havelsan.ueransim.utils.console.Logging;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 public class Backend {
 

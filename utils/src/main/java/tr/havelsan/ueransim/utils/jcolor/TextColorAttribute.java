@@ -22,20 +22,35 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
-import tr.havelsan.ueransim.utils.bits.Bit3;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-public class DeregistrationConfig {
-    public final IEDeRegistrationType deregistrationType;
-    public final Bit3 ngKSI;
-    public final IE5gGutiMobileIdentity guti;
+class TextColorAttribute extends ColorAttribute {
 
-    public DeregistrationConfig(IEDeRegistrationType deregistrationType, Bit3 ngKSI, IE5gGutiMobileIdentity guti) {
-        this.deregistrationType = deregistrationType;
-        this.ngKSI = ngKSI;
-        this.guti = guti;
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int colorNumber) {
+        super(colorNumber);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int r, int g, int b) {
+        super(r, g, b);
+    }
+
+    @Override
+    protected String getColorAnsiPrefix() {
+        String ANSI_8BIT_COLOR_PREFIX = "38;5;";
+        String ANSI_TRUE_COLOR_PREFIX = "38;2;";
+
+        return isTrueColor() ? ANSI_TRUE_COLOR_PREFIX : ANSI_8BIT_COLOR_PREFIX;
+    }
+
 }

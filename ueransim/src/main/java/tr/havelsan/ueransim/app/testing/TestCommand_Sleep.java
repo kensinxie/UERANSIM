@@ -22,17 +22,13 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.app.testing;
 
-import tr.havelsan.ueransim.nas.impl.ies.IE5gTmsiMobileIdentity;
-import tr.havelsan.ueransim.utils.bits.Bit3;
+public class TestCommand_Sleep extends TestCommand {
 
-public class ServiceRequestFlowConfig {
-    public final IE5gTmsiMobileIdentity tmsi;
-    public final Bit3 ngKSI;
+    public final int duration;
 
-    public ServiceRequestFlowConfig(IE5gTmsiMobileIdentity tmsi, Bit3 ngKSI) {
-        this.tmsi = tmsi;
-        this.ngKSI = ngKSI;
+    public TestCommand_Sleep(int duration) {
+        this.duration = duration;
     }
 }

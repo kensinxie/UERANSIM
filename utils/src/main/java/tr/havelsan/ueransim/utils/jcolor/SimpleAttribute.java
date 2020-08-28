@@ -22,26 +22,29 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.events;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-import tr.havelsan.ueransim.utils.Utils;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+class SimpleAttribute extends AnsiColorAttribute {
 
-public class EventParser {
+    private final String _code;
 
-    public static String[] possibleEvents() {
-        return new ArrayList<>(Utils.streamToList(Arrays.stream(UeCommandEvent.Command.values()).map(x -> x.cmd)))
-                .toArray(new String[0]);
+    /**
+     * Constructor. Maps an attribute to an Ansi code.
+     *
+     * @param code Ansi code that represents the attribute.
+     */
+    SimpleAttribute(String code) {
+        _code = code;
     }
 
-    public static BaseEvent parse(String command) {
-        var ueCmd = UeCommandEvent.Command.fromValue(command);
-        if (ueCmd == null)
-            return null;
-        return new UeCommandEvent(ueCmd);
+    @Override
+    public String toString() {
+        return _code;
     }
+
 }

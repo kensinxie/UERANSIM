@@ -22,11 +22,7 @@
  * SOFTWARE.
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.app.testing;
 
-public class UEContextReleaseRequestConfig {
-
-    public UEContextReleaseRequestConfig() {
-
-    }
+public class TestCommand_PeriodicRegistration extends TestCommand {
 }

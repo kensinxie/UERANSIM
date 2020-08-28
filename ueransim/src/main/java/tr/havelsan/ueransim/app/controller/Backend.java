@@ -50,7 +50,8 @@ public class Backend {
 
             String s = Json.fromJson(ctx.message(), String.class);
 
-            program.runTest(s);
+            if (s.length() > 0 && !s.equals("dummy"))
+                program.runTest(s);
 
             logEntries.clear();
         }

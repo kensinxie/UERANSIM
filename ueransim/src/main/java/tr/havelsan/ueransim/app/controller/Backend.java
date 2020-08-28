@@ -7,10 +7,10 @@ import io.javalin.websocket.WsConnectHandler;
 import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import org.jetbrains.annotations.NotNull;
-import tr.havelsan.ueransim.app.events.EventParser;
+import tr.havelsan.ueransim.app.Program;
 import tr.havelsan.ueransim.utils.Json;
-import tr.havelsan.ueransim.utils.LogEntry;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.LogEntry;
+import tr.havelsan.ueransim.utils.console.Logging;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -22,16 +22,14 @@ public class Backend {
     private static final Queue<String> cmdQueue = new ArrayDeque<>();
 
     public static void main(String[] args) {
-
         var handler = new Handler();
 
         Javalin.create().start(7070).ws("/demo", ws -> {
-
             ws.onConnect(handler);
-
             ws.onMessage(handler);
-
         });
+
+        var program = new Program();
 
         new Thread(() -> ProgramPOC.run(cmdQueue)).start();
     }

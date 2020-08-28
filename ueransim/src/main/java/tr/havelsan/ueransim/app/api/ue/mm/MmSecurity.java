@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue.mm;
@@ -38,14 +36,14 @@ import tr.havelsan.ueransim.nas.impl.messages.SecurityModeCommand;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeComplete;
 import tr.havelsan.ueransim.nas.impl.messages.SecurityModeReject;
 import tr.havelsan.ueransim.app.structs.SelectedAlgorithms;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.OctetOutputStream;
 import tr.havelsan.ueransim.utils.Tag;
 import tr.havelsan.ueransim.utils.bits.Bit;
 
 public class MmSecurity {
 
-    public static void handleSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
+    public static void receiveSecurityModeCommand(UeSimContext ctx, SecurityModeCommand message) {
         Logging.funcIn("Handling: Security Mode Command");
 
         // todo: check the integriti with new security context

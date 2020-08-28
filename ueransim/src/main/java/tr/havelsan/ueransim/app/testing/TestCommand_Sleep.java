@@ -20,24 +20,15 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.app.testing;
 
-public class LogEntry {
-    public final Severity severity;
-    public final Color color;
-    public final int depth;
-    public final Tag tag;
-    public final String message;
+public class TestCommand_Sleep extends TestCommand {
 
-    public LogEntry(Severity severity, Color color, int depth, Tag tag, String message) {
-        this.severity = severity;
-        this.color = color;
-        this.depth = depth;
-        this.tag = tag;
-        this.message = message;
+    public final int duration;
+
+    public TestCommand_Sleep(int duration) {
+        this.duration = duration;
     }
 }

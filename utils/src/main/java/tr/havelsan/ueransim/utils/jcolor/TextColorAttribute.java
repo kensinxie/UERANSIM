@@ -20,26 +20,37 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import tr.havelsan.ueransim.nas.impl.ies.IEDnn;
-import tr.havelsan.ueransim.nas.impl.ies.IESNssai;
-import tr.havelsan.ueransim.utils.octets.Octet;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-public class PduSessionReleaseConfig {
-    public final Octet pduSessionId;
-    public final Octet procedureTransactionId;
-    public final IESNssai sNssai;
-    public final IEDnn dnn;
+class TextColorAttribute extends ColorAttribute {
 
-    public PduSessionReleaseConfig(Octet pduSessionId, Octet procedureTransactionId, IESNssai sNssai, IEDnn dnn) {
-        this.pduSessionId = pduSessionId;
-        this.procedureTransactionId = procedureTransactionId;
-        this.sNssai = sNssai;
-        this.dnn = dnn;
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int colorNumber) {
+        super(colorNumber);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    TextColorAttribute(int r, int g, int b) {
+        super(r, g, b);
+    }
+
+    @Override
+    protected String getColorAnsiPrefix() {
+        String ANSI_8BIT_COLOR_PREFIX = "38;5;";
+        String ANSI_TRUE_COLOR_PREFIX = "38;2;";
+
+        return isTrueColor() ? ANSI_TRUE_COLOR_PREFIX : ANSI_8BIT_COLOR_PREFIX;
+    }
+
 }

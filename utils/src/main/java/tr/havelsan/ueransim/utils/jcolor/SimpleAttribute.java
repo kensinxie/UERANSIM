@@ -20,39 +20,31 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.utils;
+package tr.havelsan.ueransim.utils.jcolor;
 
-import java.util.function.Consumer;
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-public class Console {
+class SimpleAttribute extends AnsiColorAttribute {
 
-    private static final BaseConsole c = new BaseConsole();
+    private final String _code;
 
-    public static void print(Color color, String format, Object... args) {
-        c.print(color, format, args);
+    /**
+     * Constructor. Maps an attribute to an Ansi code.
+     *
+     * @param code Ansi code that represents the attribute.
+     */
+    SimpleAttribute(String code) {
+        _code = code;
     }
 
-    public static void println(Color color, String format, Object... args) {
-        c.println(color, format, args);
+    @Override
+    public String toString() {
+        return _code;
     }
 
-    public static void printDiv() {
-        c.printDiv();
-    }
-
-    public static void addPrintHandler(Consumer<String> handler) {
-        c.addPrintHandler(handler);
-    }
-
-    public static void setStandardPrintEnabled(boolean standardPrintEnabled) {
-        c.setStandardPrintEnabled(standardPrintEnabled);
-    }
-
-    public static void println() {
-        c.println();
-    }
 }

@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.mts;
@@ -37,11 +35,17 @@ import java.util.Map;
 
 public class MtsConstruct {
 
-    private static boolean parameterCountMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private final MtsContext ctx;
+
+    MtsConstruct(MtsContext ctx) {
+        this.ctx = ctx;
+    }
+
+    private boolean parameterCountMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         return constructor.getParameterCount() >= parameters.size();
     }
 
-    private static boolean parameterNameMatches(Constructor<?> constructor, Map<String, Object> parameters) {
+    private boolean parameterNameMatches(Constructor<?> constructor, Map<String, Object> parameters) {
         if (constructor.getParameterCount() < parameters.size())
             return false;
 
@@ -57,7 +61,7 @@ public class MtsConstruct {
         return true;
     }
 
-    private static boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
+    private boolean parameterTypeMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
         if (constructor.getParameterCount() < parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
@@ -74,18 +78,18 @@ public class MtsConstruct {
                     return false;
                 }
             }
-            if (!MtsConvert.isConvertable(object.getClass(), param.getType(), includeCustoms))
+            if (!ctx.converter.isConvertable(object.getClass(), param.getType(), includeCustoms))
                 return false;
         }
         return true;
     }
 
-    private static boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
+    private boolean parameterTypeExactMatches(Constructor<?> constructor, Map<String, Object> parameters, boolean includeCustoms) {
         if (constructor.getParameterCount() != parameters.size())
             return false;
         for (var param : constructor.getParameters()) {
             var object = parameters.get(param.getName());
-            var conversion = MtsConvert.convert(object, param.getType(), includeCustoms);
+            var conversion = ctx.converter.convert(object, param.getType(), includeCustoms);
             if (conversion.stream().noneMatch(c -> c.depth == 0 && (c.level == ConversionLevel.SAME_TYPE))) {
                 return false;
             }
@@ -93,9 +97,9 @@ public class MtsConstruct {
         return true;
     }
 
-    public static <T> T construct(Class<T> type, Map<String, Object> args, boolean includeCustoms) {
+    public <T> T construct(Class<T> type, Map<String, Object> args, boolean includeCustoms) {
         if (includeCustoms) {
-            var customConstruct = TypeRegistry.getCustomConstruct(type);
+            var customConstruct = ctx.typeRegistry.getCustomConstruct(type);
             if (customConstruct != null)
                 return customConstruct.construct(type, args);
         }
@@ -140,7 +144,7 @@ public class MtsConstruct {
                 value = construct(param.getType(), (ImplicitTypedObject) value, includeCustoms);
             }
 
-            var conversions = MtsConvert.convert(value, param.getType(), includeCustoms);
+            var conversions = ctx.converter.convert(value, param.getType(), includeCustoms);
 
             var shallowConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth == 0));
             var deepConversions = Utils.streamToList(conversions.stream().filter(conversion -> conversion.depth != 0));
@@ -174,7 +178,7 @@ public class MtsConstruct {
         }
     }
 
-    public static <T> T construct(Class<T> type, ImplicitTypedObject implicitTypedObject, boolean includeCustoms) {
+    public <T> T construct(Class<T> type, ImplicitTypedObject implicitTypedObject, boolean includeCustoms) {
         return construct(type, implicitTypedObject.getParameters(), includeCustoms);
     }
 }

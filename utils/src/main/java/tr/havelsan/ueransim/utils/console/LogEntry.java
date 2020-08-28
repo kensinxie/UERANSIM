@@ -20,21 +20,23 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.utils.console;
 
-import tr.havelsan.ueransim.nas.impl.ies.IE5gTmsiMobileIdentity;
-import tr.havelsan.ueransim.utils.bits.Bit3;
+import tr.havelsan.ueransim.utils.Severity;
+import tr.havelsan.ueransim.utils.Tag;
 
-public class ServiceRequestFlowConfig {
-    public final IE5gTmsiMobileIdentity tmsi;
-    public final Bit3 ngKSI;
+public class LogEntry {
+    public final Severity severity;
+    public final int depth;
+    public final Tag tag;
+    public final String message;
 
-    public ServiceRequestFlowConfig(IE5gTmsiMobileIdentity tmsi, Bit3 ngKSI) {
-        this.tmsi = tmsi;
-        this.ngKSI = ngKSI;
+    public LogEntry(Severity severity, int depth, Tag tag, String message) {
+        this.severity = severity;
+        this.depth = depth;
+        this.tag = tag;
+        this.message = message;
     }
 }

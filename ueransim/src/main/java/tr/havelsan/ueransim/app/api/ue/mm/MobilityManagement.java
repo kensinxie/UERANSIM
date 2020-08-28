@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.ue.mm;
@@ -29,11 +27,16 @@ package tr.havelsan.ueransim.app.api.ue.mm;
 import tr.havelsan.ueransim.app.api.nas.NasTimer;
 import tr.havelsan.ueransim.app.api.ue.UserEquipment;
 import tr.havelsan.ueransim.app.core.UeSimContext;
+import tr.havelsan.ueransim.app.testing.TestCommand;
+import tr.havelsan.ueransim.app.testing.TestCommand_Deregistration;
+import tr.havelsan.ueransim.app.testing.TestCommand_InitialRegistration;
+import tr.havelsan.ueransim.app.testing.TestCommand_PeriodicRegistration;
+import tr.havelsan.ueransim.app.utils.Debugging;
 import tr.havelsan.ueransim.nas.core.messages.PlainMmMessage;
 import tr.havelsan.ueransim.nas.impl.enums.ERegistrationType;
+import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
 import tr.havelsan.ueransim.nas.impl.messages.*;
-import tr.havelsan.ueransim.app.utils.Debugging;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 public class MobilityManagement {
@@ -56,19 +59,23 @@ public class MobilityManagement {
         } else if (message instanceof AuthenticationReject) {
             MmAuthentication.receiveAuthenticationReject(ctx, (AuthenticationReject) message);
         } else if (message instanceof RegistrationReject) {
-            MmRegistration.handleRegistrationReject(ctx, (RegistrationReject) message);
+            MmRegistration.receiveRegistrationReject(ctx, (RegistrationReject) message);
         } else if (message instanceof IdentityRequest) {
-            MmIdentity.handleIdentityRequest(ctx, (IdentityRequest) message);
+            MmIdentity.receiveIdentityRequest(ctx, (IdentityRequest) message);
         } else if (message instanceof RegistrationAccept) {
-            MmRegistration.handleRegistrationAccept(ctx, (RegistrationAccept) message);
+            MmRegistration.receiveRegistrationAccept(ctx, (RegistrationAccept) message);
         } else if (message instanceof ServiceAccept) {
-            MmService.handleServiceAccept(ctx, (ServiceAccept) message);
+            MmService.receiveServiceAccept(ctx, (ServiceAccept) message);
         } else if (message instanceof ServiceReject) {
-            MmService.handleServiceReject(ctx, (ServiceReject) message);
+            MmService.receiveServiceReject(ctx, (ServiceReject) message);
         } else if (message instanceof SecurityModeCommand) {
-            MmSecurity.handleSecurityModeCommand(ctx, (SecurityModeCommand) message);
+            MmSecurity.receiveSecurityModeCommand(ctx, (SecurityModeCommand) message);
         } else if (message instanceof ConfigurationUpdateCommand) {
             MmConfiguration.receiveConfigurationUpdate(ctx, (ConfigurationUpdateCommand) message);
+        } else if (message instanceof DeRegistrationAcceptUeOriginating) {
+            MmDeregistration.receiveDeregistrationAccept(ctx, (DeRegistrationAcceptUeOriginating) message);
+        } else if (message instanceof DeRegistrationRequestUeTerminated) {
+            MmDeregistration.receiveDeregistrationRequest(ctx, (DeRegistrationRequestUeTerminated) message);
         } else {
             Logging.error(Tag.MESSAGING, "Unhandled message received: %s", message.getClass().getSimpleName());
         }
@@ -82,19 +89,21 @@ public class MobilityManagement {
         }
     }
 
-    public static void executeCommand(UeSimContext ctx, String cmd) {
+    public static boolean executeCommand(UeSimContext ctx, TestCommand cmd) {
         Debugging.assertThread(ctx);
 
-        switch (cmd) {
-            case "initial-registration":
-                MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
-                break;
-            case "periodic-registration":
-                MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
-                break;
-            default:
-                Logging.error(Tag.EVENT, "MobilityManagement.executeCommand, command not recognized: %s", cmd);
-                break;
+        if (cmd instanceof TestCommand_InitialRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.INITIAL_REGISTRATION);
+            return true;
+        } else if (cmd instanceof TestCommand_PeriodicRegistration) {
+            MmRegistration.sendRegistration(ctx, ERegistrationType.PERIODIC_REGISTRATION_UPDATING);
+            return true;
+        } else if (cmd instanceof TestCommand_Deregistration) {
+            // todo: switch off
+            MmDeregistration.sendDeregistration(ctx, IEDeRegistrationType.ESwitchOff.NORMAL_DE_REGISTRATION);
+            return true;
         }
+
+        return false;
     }
 }

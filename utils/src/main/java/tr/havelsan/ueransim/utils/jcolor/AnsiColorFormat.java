@@ -20,15 +20,43 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.utils.jcolor;
 
-public class UEContextReleaseRequestConfig {
+/*
+ * This is the modified version of https://github.com/dialex/JColor.
+ * Licensed by Diogo Nunes under MIT
+ */
 
-    public UEContextReleaseRequestConfig() {
+import java.util.ArrayList;
+import java.util.Arrays;
 
+/**
+ * Abstracts an Array of {@link AnsiColorAttribute}s.
+ * Use it if you find this more readable than Attribute[].
+ */
+public class AnsiColorFormat {
+
+    // Starts with capacity=2 because that's how many attributes are used on average
+    private final ArrayList<AnsiColorAttribute> _AnsiColor_attributes = new ArrayList<>(2);
+
+    /**
+     * @param ansiColorAttributes All ANSI attributes to format a text.
+     */
+    public AnsiColorFormat(AnsiColorAttribute... ansiColorAttributes) {
+        _AnsiColor_attributes.addAll(Arrays.asList(ansiColorAttributes));
+    }
+
+    /**
+     * @param text String to format.
+     * @return The formatted string, ready to be printed.
+     */
+    public String format(String text) {
+        return AnsiColor.colorize(text, this.toArray());
+    }
+
+    protected AnsiColorAttribute[] toArray() {
+        return _AnsiColor_attributes.toArray(new AnsiColorAttribute[0]);
     }
 }

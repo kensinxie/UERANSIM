@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.mts;
@@ -60,15 +58,15 @@ public final class ImplicitTypedObject {
         return value == null ? null : String.valueOf(value);
     }
 
-    public <T> T getConstructed(String key, Class<T> type) {
-        return MtsConstruct.construct(type, (ImplicitTypedObject) get(key), true);
+    public <T> T getConstructed(MtsContext mts, String key, Class<T> type) {
+        return mts.constructor.construct(type, (ImplicitTypedObject) get(key), true);
     }
 
-    public <T> T asConstructed(Class<T> type) {
-        return MtsConstruct.construct(type, this, true);
+    public <T> T asConstructed(MtsContext mts, Class<T> type) {
+        return mts.constructor.construct(type, this, true);
     }
 
-    public <T> T getConverted(String key, Class<T> type) {
-        return (T) MtsConvert.convert(get(key), type, true).get(0).value;
+    public <T> T getConverted(MtsContext mts,String key, Class<T> type) {
+        return (T) mts.converter.convert(get(key), type, true).get(0).value;
     }
 }

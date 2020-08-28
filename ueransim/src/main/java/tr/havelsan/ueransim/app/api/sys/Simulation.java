@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.api.sys;
@@ -32,7 +30,7 @@ import tr.havelsan.ueransim.app.core.UeSimContext;
 import tr.havelsan.ueransim.app.events.BaseEvent;
 import tr.havelsan.ueransim.app.events.gnb.GnbEvent;
 import tr.havelsan.ueransim.app.events.ue.UeEvent;
-import tr.havelsan.ueransim.utils.Logging;
+import tr.havelsan.ueransim.utils.console.Logging;
 import tr.havelsan.ueransim.utils.Tag;
 
 import java.util.UUID;

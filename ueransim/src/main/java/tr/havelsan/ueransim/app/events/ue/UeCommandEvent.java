@@ -20,23 +20,23 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
 package tr.havelsan.ueransim.app.events.ue;
 
-public class UeCommandEvent extends UeEvent {
-    public final String cmd;
+import tr.havelsan.ueransim.app.testing.TestCommand;
 
-    public UeCommandEvent(String cmd) {
+public class UeCommandEvent extends UeEvent {
+    public final TestCommand cmd;
+
+    public UeCommandEvent(TestCommand cmd) {
         this.cmd = cmd;
     }
 
     @Override
     public String toString() {
         return "UeCommandEvent{" +
-                "cmd='" + cmd + '\'' +
+                "cmd=" + cmd +
                 '}';
     }
 }

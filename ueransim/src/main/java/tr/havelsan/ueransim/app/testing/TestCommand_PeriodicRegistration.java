@@ -20,31 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.app.events;
+package tr.havelsan.ueransim.app.testing;
 
-import tr.havelsan.ueransim.app.events.ue.UeCommandEvent;
-
-public class EventParser {
-
-    public static String[] possibleEvents() {
-        return new String[]{
-                "initial-registration",
-                "periodic-registration",
-                "pdu-session-establishment"
-        };
-    }
-
-    public static BaseEvent parse(String command) {
-        if (command == null) {
-            return null;
-        }
-        if (command.equals("initial-registration") || command.equals("periodic-registration") || command.equals("pdu-session-establishment")) {
-            return new UeCommandEvent(command);
-        }
-        return null;
-    }
+public class TestCommand_PeriodicRegistration extends TestCommand {
 }

@@ -20,24 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- * @author Ali Güngör (aligng1620@gmail.com)
  */
 
-package tr.havelsan.ueransim.app.configs;
+package tr.havelsan.ueransim.app.testing;
 
-import tr.havelsan.ueransim.nas.impl.ies.IE5gGutiMobileIdentity;
-import tr.havelsan.ueransim.nas.impl.ies.IEDeRegistrationType;
-import tr.havelsan.ueransim.utils.bits.Bit3;
-
-public class DeregistrationConfig {
-    public final IEDeRegistrationType deregistrationType;
-    public final Bit3 ngKSI;
-    public final IE5gGutiMobileIdentity guti;
-
-    public DeregistrationConfig(IEDeRegistrationType deregistrationType, Bit3 ngKSI, IE5gGutiMobileIdentity guti) {
-        this.deregistrationType = deregistrationType;
-        this.ngKSI = ngKSI;
-        this.guti = guti;
-    }
+public class TestCommand_PduSessionEstablishment extends TestCommand {
 }

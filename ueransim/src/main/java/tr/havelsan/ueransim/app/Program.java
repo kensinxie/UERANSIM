@@ -24,6 +24,7 @@
 
 package tr.havelsan.ueransim.app;
 
+import org.json.JSONObject;
 import tr.havelsan.ueransim.app.api.sys.INodeMessagingListener;
 import tr.havelsan.ueransim.app.api.sys.Simulation;
 import tr.havelsan.ueransim.app.core.BaseSimContext;
@@ -71,6 +72,7 @@ public class Program {
     private final ImplicitTypedObject testCases;
     private final ImplicitTypedObject loadTesting;
     private ArrayList<UeSimContext> ueContexts;
+    int numberOfUe;
 
     public Program() throws Exception {
         this.defaultMts = new MtsContext();
@@ -137,7 +139,7 @@ public class Program {
     }
 
     private void initialize() throws Exception {
-        var numberOfUe = loadTesting.getInt("number-of-UE");
+        numberOfUe = loadTesting.getInt("number-of-UE");
 
         var simContext = app.createSimContext(new NodeMessagingListener());
 
@@ -204,9 +206,13 @@ public class Program {
     }
 
     public void runTest(String testName) throws Exception {
-        var testObjects = (Object[]) testCases.get(testName);
+        String commandType =  new JSONObject(testName).getJSONObject("generateCommand").getString("name");
+        String numberOfUe =  new JSONObject(testName).getString("numberOfAsset");
+        setNumberOfUe(numberOfUe);
+
+        var testObjects = (Object[]) testCases.get(commandType);
         if (testObjects == null) {
-            throw new RuntimeException("test case not found: " + testName);
+            throw new RuntimeException("test case not found: " + commandType);
         }
 
         var testCommands = new TestCommand[testObjects.length];
@@ -214,6 +220,10 @@ public class Program {
             testCommands[i] = (TestCommand) testObjects[i];
         }
         runTest(testName, testCommands);
+    }
+
+    private void setNumberOfUe(String numberOfUe){
+        this.numberOfUe  = Integer.parseInt(numberOfUe);
     }
 
     private void runTest(String testName, TestCommand[] testCommands) throws Exception {
